@@ -1,33 +1,26 @@
 ---
 id: tutorial
-title: "Tutorial: Intro to React"
+title: "Tutorial: Intro to Vue.js with TypeScript"
 layout: tutorial
 sectionid: tutorial
 permalink: tutorial/tutorial.html
 redirect_from:
   - "docs/tutorial.html"
-  - "docs/why-react.html"
-  - "docs/tutorial-ja-JP.html"
-  - "docs/tutorial-ko-KR.html"
-  - "docs/tutorial-zh-CN.html"
 ---
 
-This tutorial doesn't assume any existing React knowledge.
+This tutorial is a port of React's excellent tutorial to Vue.js and TypeScript.
+This tutorial does not assume any existing Vue.js knowledge.
 
 ## Before We Start the Tutorial
 
-We will build a small game during this tutorial. **You might be tempted to skip it because you're not building games -- but give it a chance.** The techniques you'll learn in the tutorial are fundamental to building any React apps, and mastering it will give you a deep understanding of React.
-
->Tip
->
->This tutorial is designed for people who prefer to **learn by doing**. If you prefer learning concepts from the ground up, check out our [step-by-step guide](/docs/hello-world.html). You might find this tutorial and the guide complementary to each other.
+We will build a small game during this tutorial. **You might be tempted to skip it because you're not building games -- but give it a chance.** The techniques you'll learn in the tutorial are fundamental to building any Vue.js apps, and mastering it will give you a deep understanding of Vue.js.
 
 The tutorial is divided into several sections:
 
 * [Setup for the Tutorial](#setup-for-the-tutorial) will give you **a starting point** to follow the tutorial.
-* [Overview](#overview) will teach you **the fundamentals** of React: components, props, and state.
-* [Completing the Game](#completing-the-game) will teach you **the most common techniques** in React development.
-* [Adding Time Travel](#adding-time-travel) will give you **a deeper insight** into the unique strengths of React.
+* [Overview](#overview) will teach you **the fundamentals** of Vue.js: components, props, and state.
+* [Completing the Game](#completing-the-game) will teach you **the most common techniques** in Vue.js development.
+* [Adding Time Travel](#adding-time-travel) will give you **a deeper insight** into the unique strengths of Vue.js.
 
 You don't have to complete all of the sections at once to get the value out of this tutorial. Try to get as far as you can -- even if it's one or two sections.
 
@@ -35,9 +28,9 @@ It's fine to copy and paste code as you're following along the tutorial, but we 
 
 ### What Are We Building?
 
-In this tutorial, we'll show how to build an interactive tic-tac-toe game with React.
+In this tutorial, we'll show how to build an interactive tic-tac-toe game with Vue.js.
 
-You can see what we'll be building here: **[Final Result](https://codepen.io/gaearon/pen/gWWZgR?editors=0010)**. If the code doesn't make sense to you, or if you are unfamiliar with the code's syntax, don't worry! The goal of this tutorial is to help you understand React and its syntax.
+You can see what we'll be building here: **[Final Result](https://codepen.io/gaearon/pen/gWWZgR?editors=0010)**. Note that this version of the game has been built with React so the code you see there is not relevant for our purposes.
 
 We recommend that you check out the tic-tac-toe game before continuing with the tutorial. One of the features that you'll notice is that there is a numbered list to the right of the game's board. This list gives you a history of all of the moves that have occurred in the game, and is updated as the game progresses.
 
@@ -45,70 +38,191 @@ You can close the tic-tac-toe game once you're familiar with it. We'll be starti
 
 ### Prerequisites
 
-We'll assume that you have some familiarity with HTML and JavaScript, but you should be able to follow along even if you're coming from a different programming language. We'll also assume that you're familiar with programming concepts like functions, objects, arrays, and to a lesser extent, classes.
+We'll assume that you have some familiarity with HTML and JavaScript/TypeScript, but you should be able to follow along even if you're coming from a different programming language. We'll also assume that you're familiar with programming concepts like functions, objects, arrays, and to a lesser extent, classes.
 
 If you need to review JavaScript, we recommend reading [this guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript/A_re-introduction_to_JavaScript). Note that we're also using some features from ES6 -- a recent version of JavaScript. In this tutorial, we're using [arrow functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions), [classes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes), [`let`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let), and [`const`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const) statements. You can use the [Babel REPL](babel://es5-syntax-example) to check what ES6 code compiles to.
 
-## Setup for the Tutorial
+We actually won't write any JavaScript but TypeScript which is essentially JavaScript with some added syntax. For a quick introduction you can check out [TypeScript in 5 minutes](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html) which should give you a very basic idea.
 
-There are two ways to complete this tutorial: you can either write the code in your browser, or you can set up a local development environment on your computer.
+## Setup for the Tutorial: Local Development Environment
 
-### Setup Option 1: Write Code in the Browser
-
-This is the quickest way to get started!
-
-First, open this **[Starter Code](https://codepen.io/gaearon/pen/oWWQNa?editors=0010)** in a new tab. The new tab should display an empty tic-tac-toe game board and React code. We will be editing the React code in this tutorial.
-
-You can now skip the second setup option, and go to the [Overview](#overview) section to get an overview of React.
-
-### Setup Option 2: Local Development Environment
-
-This is completely optional and not required for this tutorial!
-
-<br>
-
-<details>
-
-<summary><b>Optional: Instructions for following along locally using your preferred text editor</b></summary>
-
-This setup requires more work but allows you to complete the tutorial using an editor of your choice. Here are the steps to follow:
-
-1. Make sure you have a recent version of [Node.js](https://nodejs.org/en/) installed.
-2. Follow the [installation instructions for Create React App](/docs/create-a-new-react-app.html#create-react-app) to make a new project.
+1. Make sure you have a recent version of [Node.js](https://nodejs.org/en/) and [Yarn](https://yarnpkg.com) installed. You'll also need some text editor. At the time of this writing, [Visual Studio Code](https://code.visualstudio.com) seems to be the typescript editor of choice. Make sure to install TSLint, TSLint Vue, and the Vetur plugins for it. Finally, make sure you have the Vue plugin installed in your browser.
+2. We'll setup an empty Vue.js/TypeScript project with `vue-cli`
 
 ```bash
-npm install -g create-react-app
-create-react-app my-app
-```
-
-3. Delete all files in the `src/` folder of the new project (don't delete the folder, just its contents).
-
-```bash
+yarn global add vue-cli
+hash -r
+mkdir my-app
 cd my-app
-rm -f src/*
+vue init Toilal/vue-webpack-template
 ```
 
-4. Add a file named `index.css` in the `src/` folder with [this CSS code](https://codepen.io/gaearon/pen/oWWQNa?editors=0100).
+The defaults are mostly good, but we won't need the `vue-router`, we want to
+externalize `<style>`, we want to use TypeScript, we don't need unit tests, no
+`e2e` tests, and we want to use `Yarn` instead of `NPM`
 
-5. Add a file named `index.js` in the `src/` folder with [this JS code](https://codepen.io/gaearon/pen/oWWQNa?editors=0010).
+3. You can start your app by typing `yarn run dev`. Pointing your browser the URL it eventually displays, should produce a Welcome screen. Now you should open the `src/` directory in your editor. We won't need most of the autogenerated things, so you should delete the `assets/`, and the contents of `components/`.
 
-6. Add these three lines to the top of `index.js` in the `src/` folder:
+4. Replace `App.css` with the following:
 
-```js
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
+```css
+body {
+  font: 14px "Century Gothic", Futura, sans-serif;
+  margin: 20px;
+}
+
+ol, ul {
+  padding-left: 30px;
+}
+
+.board-row:after {
+  clear: both;
+  content: "";
+  display: table;
+}
+
+.status {
+  margin-bottom: 10px;
+}
+
+.square {
+  background: #fff;
+  border: 1px solid #999;
+  float: left;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 34px;
+  height: 34px;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+  width: 34px;
+}
+
+.square:focus {
+  outline: none;
+}
+
+.kbd-navigation .square:focus {
+  background: #ddd;
+}
+
+.game {
+  display: flex;
+  flex-direction: row;
+}
+
+.game-info {
+  margin-left: 20px;
+}
 ```
 
-Now if you run `npm start` in the project folder and open `http://localhost:3000` in the browser, you should see an empty tic-tac-toe field.
+5. Replace `App.vue` with the following.
 
-We recommend following [these instructions](https://babeljs.io/docs/editors/) to configure syntax highlighting for your editor.
+```
+<template>
+  <div id="app">
+    <Game/>
+  </div>
+</template>
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
 
-</details>
+import Game from './components/Game.vue'
 
-### Help, I'm Stuck!
+@Component({
+  components: { Game }
+})
+export default class App extends Vue {
 
-If you get stuck, check out the [community support resources](/community/support.html). In particular, [Reactiflux Chat](https://discord.gg/0ZcbPKXt5bZjGY5n) is a great way to get help quickly. If you don't receive an answer, or if you remain stuck, please file an issue, and we'll help you out.
+}
+</script>
+
+<style src="./App.css">
+</style>
+```
+
+Now add `components/Game.vue`, `components/Board.vue`, `components/Square.vue` with the following contents:
+
+```
+<template>
+  <div class="game">
+    <div class="game-board">
+      <Board />
+    </div>
+    <div class="game-info">
+      <div><!-- status --></div>
+      <ol><!-- TODO --></ol>
+    </div>
+  </div>
+</template>
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+
+import Board from './Board.vue'
+
+@Component({
+  components: { Board }
+})
+export default class Game extends Vue {
+}
+</script>
+```
+
+```
+<template>
+  <div>
+    <div class="status">Next player: X</div>
+    <div class="board-row">
+      <Square/>
+      <Square/>
+      <Square/>
+    </div>
+    <div class="board-row">
+      <Square/>
+      <Square/>
+      <Square/>
+    </div>
+    <div class="board-row">
+      <Square/>
+      <Square/>
+      <Square/>
+    </div>
+  </div>
+</template>
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+
+import Square from './Square.vue'
+
+@Component({
+  components: { Square }
+})
+export default class Board extends Vue {
+}
+</script>
+```
+
+```
+<template>
+  <button class="square">
+  </button>
+</template>
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+
+@Component({})
+export default class Square extends Vue {
+}
+</script>
+```
+
+6. Now if you open the URL you tried before in the browser you should see an empty tic-tac-toe field.
 
 ## Overview
 
