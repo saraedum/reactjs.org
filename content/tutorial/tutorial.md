@@ -226,61 +226,54 @@ export default class Square extends Vue {
 
 ## Overview
 
-Now that you're set up, let's get an overview of React!
+Now that you're set up, let's get an overview of Vue.js!
 
-### What Is React?
+### What Is Vue.js?
 
-React is a declarative, efficient, and flexible JavaScript library for building user interfaces. It lets you compose complex UIs from small and isolated pieces of code called "components".
+Vue.js is a declarative, efficient, and flexible JavaScript library for building user interfaces. It lets you compose complex UIs from small and isolated pieces of code called "components".
 
-React has a few different kinds of components, but we'll start with `React.Component` subclasses:
+For our purposes, Vue.js components always corresponding to a `.vue` file that has two blocks, a `<template>` and a `<script>`.
 
-```javascript
-class ShoppingList extends React.Component {
-  render() {
-    return (
-      <div className="shopping-list">
-        <h1>Shopping List for {this.props.name}</h1>
-        <ul>
-          <li>Instagram</li>
-          <li>WhatsApp</li>
-          <li>Oculus</li>
-        </ul>
-      </div>
-    );
-  }
+```
+<template>
+  <div>
+    <h1>Shopping List for {{name}}</h1>
+    <ul>
+      <li>Instagram</li>
+      <li>WhatsApp</li>
+      <li>Oculus</li>
+    </ul>
+  </div>
+</template>
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import Prop from 'vue-property-decorator'
+
+@Component({})
+export default class ShoppingList extends Vue {
+  @Prop({}) name: string | null
 }
 
 // Example usage: <ShoppingList name="Mark" />
+</script>
 ```
 
-We'll get to the funny XML-like tags soon. We use components to tell React what we want to see on the screen. When our data changes, React will efficiently update and re-render our components.
+Here, ShoppingList is a **Vue.js component class**, or **Vue.js component type**. A component takes in parameters, called `props` (short for "properties"), and returns a hierarchy of views to display via its template.
 
-Here, ShoppingList is a **React component class**, or **React component type**. A component takes in parameters, called `props` (short for "properties"), and returns a hierarchy of views to display via the `render` method.
+A template contains just HTML but with some added magic. For example, you can put *any* JavaScript expressions within the double braces inside the template. Each Vue.js element is a JavaScript object that you can store in a variable or pass around in your program.
 
-The `render` method returns a *description* of what you want to see on the screen. React takes the description and displays the result. In particular, `render` returns a **React element**, which is a lightweight description of what to render. Most React developers use a special syntax called "JSX" which makes these structures easier to write. The `<div />` syntax is transformed at build time to `React.createElement('div')`. The example above is equivalent to:
+The `ShoppingList` component above only renders built-in DOM components like `<div />` and `<li />`. But you can compose and render custom Vue.js components too. For example, we can now refer to the whole shopping list by writing `<ShoppingList />`. Each Vue.js component is encapsulated and can operate independently; this allows you to build complex UIs from simple components.
 
-```javascript
-return React.createElement('div', {className: 'shopping-list'},
-  React.createElement('h1', /* ... h1 children ... */),
-  React.createElement('ul', /* ... ul children ... */)
-);
-```
-
-[See full expanded version.](babel://tutorial-expanded-version)
-
-If you're curious, `createElement()` is described in more detail in the [API reference](/docs/react-api.html#createelement), but we won't be using it in this tutorial. Instead, we will keep using JSX.
-
-JSX comes with the full power of JavaScript. You can put *any* JavaScript expressions within braces inside JSX. Each React element is a JavaScript object that you can store in a variable or pass around in your program.
-
-The `ShoppingList` component above only renders built-in DOM components like `<div />` and `<li />`. But you can compose and render custom React components too. For example, we can now refer to the whole shopping list by writing `<ShoppingList />`. Each React component is encapsulated and can operate independently; this allows you to build complex UIs from simple components.
+Note that we have been using decorators in our TypeScript code. It's complicated (and probably boring) to know what these decorators do exactly. For the moment, you should just have noticed that we need `@Component({})` (which is the same as `@Component`) before every component.
 
 ## Inspecting the Starter Code
 
-If you're going to work on the tutorial **in your browser,** open this code in a new tab: **[Starter Code](https://codepen.io/gaearon/pen/oWWQNa?editors=0010)**. If you're going to work on the tutorial **locally,** instead open `src/index.js` in your project folder (you have already touched this file during the [setup](#setup-option-2-local-development-environment)).
+Please have a look at `App.vue` in your editor.
 
-This Starter Code is the base of what we're building. We've provided the CSS styling so that you only need to focus on learning React and programming the tic-tac-toe game.
+This Starter Code pulls in all the `.vue` files in the `components/` directory. It is the base of what we're building. We've provided the CSS styling so that you only need to focus on learning Vue.js and programming the tic-tac-toe game.
 
-By inspecting the code, you'll notice that we have three React components:
+By inspecting the code, you'll notice that we have three Vue.js components:
 
 * Square
 * Board
@@ -292,159 +285,81 @@ The Square component renders a single `<button>` and the Board renders 9 squares
 
 Just to get our feet wet, let's try passing some data from our Board component to our Square component.
 
-In Board's `renderSquare` method, change the code to pass a prop called `value` to the Square:
+In ``Board.vue``, change the template to pass a prop called ``value`` each Square:
 
-```js{3}
-class Board extends React.Component {
-  renderSquare(i) {
-    return <Square value={i} />;
-  }
+```html
+    <div class="board-row">
+      <Square value="1"/>
+      <Square value="2"/>
+      <Square value="3"/>
+    </div>
 ```
 
-Change Square's `render` method to show that value by replacing `{/* TODO */}` with `{this.props.value}`:
+Change ``Square.vue`` so that it accepts a property called ``value`` (we add `@Prop` called `value`, and tell TypeScript that it's a `string` or `null` if it has not been set by the parent, i.e., the Board.)
 
-```js{5}
-class Square extends React.Component {
-  render() {
-    return (
-      <button className="square">
-        {this.props.value}
-      </button>
-    );
-  }
+```ts
+import Vue from 'vue'
+import Component from 'vue-class-component'
+
+import { Prop } from 'vue-property-decorator'
+
+@Component({})
+export default class Square extends Vue {
+  @Prop({}) value: string | null
 }
 ```
 
-Before:
+Finally, we change the template so the value is actually rendered:
 
-![React Devtools](../images/tutorial/tictac-empty.png)
+```html
+  <button class="square">
+    {{value}}
+  </button>
+```
 
-After: You should see a number in each square in the rendered output.
-
-![React Devtools](../images/tutorial/tictac-numbers.png)
+You should now see numbers in all the squares that you assigned a `value` to in `Board.vue`.
 
 **[View the full code at this point](https://codepen.io/gaearon/pen/aWWQOG?editors=0010)**
 
-Congratulations! You've just "passed a prop" from a parent Board component to a child Square component. Passing props is how information flows in React apps, from parents to children.
+Congratulations! You've just "passed a prop" from a parent Board component to a child Square component. Passing props is how information flows in Vue.js apps, from parents to children.
 
 ### Making an Interactive Component
 
-Let's fill the Square component with an "X" when we click it. 
-First, change the button tag that is returned from the Square component's `render()` function to this:
+Let's fill the Square component with an "X" when we click it. Let's change our Square template again:
 
-```javascript{4}
-class Square extends React.Component {
-  render() {
-    return (
-      <button className="square" onClick={function() { alert('click'); }}>
-        {this.props.value}
-      </button>
-    );
-  }
+```html
+  <button class="square" @click="value='X'">
+    {{value}}
+  </button>
+```
+
+We tell our Square to set `value` to `'X'` on each `click` event. Note that the `@` can equally be replaced with `v-on:`.
+
+If we click on a Square now, it's value is replaced with an X.
+
+Check that this works now. But when you look at the console in your browser's developer tools you should see that Vue.js is complaining about you mutating a prop. Exactly, a prop is supposed to only be set by the parent component and not mutated inside the child component.
+
+### Private Compoent's State
+
+To remove this warning, we just need to remove the `@Prop` marker from our prop. This tells Vue.js that this is now not being set from the outside but private state of a Square, only set and used by the Square internally.
+
+```javascript
+import Vue from 'vue'
+import Component from 'vue-class-component'
+
+// import { Prop } from 'vue-property-decorator'
+
+@Component({})
+export default class Square extends Vue {
+  value: string | null = null
 }
 ```
 
-If we click on a Square now, we should get an alert in our browser.
-
->Note
->
->To save typing and avoid the [confusing behavior of `this`](https://yehudakatz.com/2011/08/11/understanding-javascript-function-invocation-and-this/), we will use the [arrow function syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) for event handlers here and further below:
->
->```javascript{4}
->class Square extends React.Component {
->  render() {
->    return (
->      <button className="square" onClick={() => alert('click')}>
->        {this.props.value}
->      </button>
->    );
->  }
->}
->```
->
->Notice how with `onClick={() => alert('click')}`, we're passing *a function* as the `onClick` prop. It only fires after a click. Forgetting `() =>` and writing `onClick={alert('click')}` is a common mistake, and would fire the alert every time the component re-renders.
-
-As a next step, we want the Square component to "remember" that it got clicked, and fill it with an "X" mark. To "remember" things, components use **state**.
-
-React components can have state by setting `this.state` in their constructors. `this.state` should be considered as private to a React component that it's defined in. Let's store the current value of the Square in `this.state`, and change it when the Square is clicked.
-
-First, we'll add a constructor to the class to initialize the state:
-
-```javascript{2-7}
-class Square extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: null,
-    };
-  }
-
-  render() {
-    return (
-      <button className="square" onClick={() => alert('click')}>
-        {this.props.value}
-      </button>
-    );
-  }
-}
-```
-
->Note
->
->In [JavaScript classes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes), you need to always call `super` when defining the constructor of a subclass. All React component classes that have a `constructor` should start it with a `super(props)` call.
-
-Now we'll change the Square's `render` method to display the current state's value when clicked:
-
-* Replace `this.props.value` with `this.state.value` inside the `<button>` tag.
-* Replace the `() => alert()` event handler with `() => this.setState({value: 'X'})`.
-* Put the `className` and `onClick` props on separate lines for better readability.
-
-After these changes, the `<button>` tag that is returned by the Square's `render` method looks like this:
-
-```javascript{12-13,15}
-class Square extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: null,
-    };
-  }
-
-  render() {
-    return (
-      <button
-        className="square"
-        onClick={() => this.setState({value: 'X'})}
-      >
-        {this.state.value}
-      </button>
-    );
-  }
-}
-```
-
-By calling `this.setState` from an `onClick` handler in the Square's `render` method, we tell React to re-render that Square whenever its `<button>` is clicked. After the update, the Square's `this.state.value` will be `'X'`, so we'll see the `X` on the game board. If you click on any Square, an `X` should show up.
-
-When you call `setState` in a component, React automatically updates the child components inside of it too.
-
-**[View the full code at this point](https://codepen.io/gaearon/pen/VbbVLg?editors=0010)**
+Now `value` is initially `null` until we click on it when it changes to an X.
 
 ### Developer Tools
 
-The React Devtools extension for [Chrome](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en) and [Firefox](https://addons.mozilla.org/en-US/firefox/addon/react-devtools/) lets you inspect a React component tree with your browser's developer tools.
-
-<img src="../images/tutorial/devtools.png" alt="React Devtools" style="max-width: 100%">
-
-The React DevTools let you check the props and the state of your React components.
-
-After installing React DevTools, you can right-click on any element on the page, click "Inspect" to open the developer tools, and the React tab will appear as the last tab to the right.
-
-**However, note there are a few extra steps to get it working with CodePen:**
-
-1. Log in or register and confirm your email (required to prevent spam).
-2. Click the "Fork" button.
-3. Click "Change View" and then choose "Debug mode".
-4. In the new tab that opens, the devtools should now have a React tab.
+This is probably a good moment to have a look at the Vue tab in your developer tools. Note that you can see the private state of all the components in your application.
 
 ## Completing the Game
 
@@ -454,50 +369,46 @@ We now have the basic building blocks for our tic-tac-toe game. To have a comple
 
 Currently, each Square component maintains the game's state. To check for a winner, we'll maintain the value of each of the 9 squares in one location.
 
-We may think that Board should just ask each Square for the Square's state. Although this approach is possible in React, we discourage it because the code becomes difficult to understand, susceptible to bugs, and hard to refactor. Instead, the best approach is to store the game's state in the parent Board component instead of in each Square. The Board component can tell each Square what to display by passing a prop, [just like we did when we passed a number to each Square](#passing-data-through-props).
+We may think that Board should just ask each Square for the Square's state. Although this approach is possible in Vue.js, we discourage it because the code becomes difficult to understand, susceptible to bugs, and hard to refactor. Instead, the best approach is to store the game's state in the parent Board component instead of in each Square. The Board component can tell each Square what to display by passing a prop, [just like we did when we passed a number to each Square](#passing-data-through-props).
 
 **To collect data from multiple children, or to have two child components communicate with each other, you need to declare the shared state in their parent component instead. The parent component can pass the state back down to the children by using props; this keeps the child components in sync with each other and with the parent component.**
 
-Lifting state into a parent component is common when React components are refactored -- let's take this opportunity to try it out. We'll add a constructor to the Board and set the Board's initial state to contain an array with 9 nulls. These 9 nulls correspond to the 9 squares:
+Lifting state into a parent component is common when Vue.js components are refactored -- let's take this opportunity to try it out. We'll set the Board's initial state to contain an array with 9 nulls, corresponding to the 9 squares on the board:
 
-```javascript{2-7}
-class Board extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      squares: Array(9).fill(null),
-    };
-  }
+```html
+<template>
+  <div>
+    <div class="status">Next player: X</div>
+    <div class="board-row">
+      <Square :value="squares[0]"/>
+      <Square :value="squares[1]"/>
+      <Square :value="squares[2]"/>
+    </div>
+    <div class="board-row">
+      <Square :value="squares[3]"/>
+      <Square :value="squares[4]"/>
+      <Square :value="squares[5]"/>
+    </div>
+    <div class="board-row">
+      <Square :value="squares[6]"/>
+      <Square :value="squares[7]"/>
+      <Square :value="squares[8]"/>
+    </div>
+  </div>
+</template>
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
 
-  renderSquare(i) {
-    return <Square value={i} />;
-  }
+import Square from './Square.vue'
 
-  render() {
-    const status = 'Next player: X';
-
-    return (
-      <div>
-        <div className="status">{status}</div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
-      </div>
-    );
-  }
+@Component({
+  components: { Square }
+})
+export default class Board extends Vue {
+  squares: (string | null)[] = Array(9).fill(null)
 }
+</script>
 ```
 
 When we fill the board in later, the board will look something like this:
@@ -510,142 +421,75 @@ When we fill the board in later, the board will look something like this:
 ]
 ```
 
-The Board's `renderSquare` method currently looks like this:
+Note that set the `value` of each `Square` to something like `squares[i]`. So we need to change `value` of each `Square` again to be a `@Prop` just like we had it earlier.
 
-```javascript
-  renderSquare(i) {
-    return <Square value={i} />;
-  }
+```html
+<template>
+  <button class="square">
+    {{value}}
+  </button>
+</template>
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+
+import { Prop } from 'vue-property-decorator'
+
+@Component({})
+export default class Square extends Vue {
+  @Prop({}) value: string | null = null
+}
+</script>
 ```
 
-In the beginning, we [passed the `value` prop down](#passing-data-through-props) from the Board to show numbers from 0 to 8 in every Square. In a different previous step, we replaced the numbers with an "X" mark [determined by Square's own state](#making-an-interactive-component). This is why Square currently ignores the `value` prop passed to it by the Board.
+Note the syntax in `:value="squares[0]"`. The `:` is a shortcut for `v-bind:` and means that `squares[0]` should be evaluated to obtain the value. Without the colon the value would be set to the string "squares[0]" instead.
 
-We will now use the prop passing mechanism again. We will modify the Board to instruct each individual Square about its current value (`'X'`, `'O'`, or `null`). We have already defined the `squares` array in the Board's constructor, and we will modify the Board's `renderSquare` method to read from it:
-
-```javascript{2}
-  renderSquare(i) {
-    return <Square value={this.state.squares[i]} />;
-  }
-```
-
-**[View the full code at this point](https://codepen.io/gaearon/pen/gWWQPY?editors=0010)**
-
-Each Square will now receive a `value` prop that will either be `'X'`, `'O'`, or `null` for empty squares.
+Each Square will now receive a `value` prop that will either be `'X'`, `'O'`, or `null` for empty squares (initially, all are empty.)
 
 Next, we need to change what happens when a Square is clicked. The Board component now maintains which squares are filled. We need to create a way for the Square to update the Board's state. Since state is considered to be private to a component that defines it, we cannot update the Board's state directly from Square.
 
-To maintain the Board's state's privacy, we'll pass down a function from the Board to the Square. This function will get called when a Square is clicked. We'll change the `renderSquare` method in Board to:
+To maintain the Board's state's privacy, we'll pass down a function from the Board to the Square. This function will get called when a Square is clicked. We'll change our template in Board to:
 
-```javascript{5}
-  renderSquare(i) {
-    return (
-      <Square
-        value={this.state.squares[i]}
-        onClick={() => this.handleClick(i)}
-      />
-    );
-  }
+```html
+  …
+  <Square :value="squares[0]" @click="handleClick(0)" />
+  …
 ```
 
->Note
->
->We split the returned element into multiple lines for readability, and added parentheses so that JavaScript doesn't insert a semicolon after `return` and break our code.
+We also need to teach Board how to react to a click:
 
-Now we're passing down two props from Board to Square: `value` and `onClick`. The `onClick` prop is a function that Square can call when clicked. We'll make the following changes to Square:
+```javascript
+export default class Board extends Vue {
+  squares: (string | null)[] = Array(9).fill(null)
 
-* Replace `this.state.value` with `this.props.value` in Square's `render` method
-* Replace `this.setState()` with `this.props.onClick()` in Square's `render` method
-* Delete the `constructor` from Square because Square no longer keeps track of the game's state
-
-After these changes, the Square component looks like this:
-
-```javascript{1,2,6,8}
-class Square extends React.Component {
-  render() {
-    return (
-      <button
-        className="square"
-        onClick={() => this.props.onClick()}
-      >
-        {this.props.value}
-      </button>
-    );
+  handleClick (i: number) {
+    this.squares = this.squares.slice()
+    this.squares[i] = 'X'
   }
 }
 ```
 
-When a Square is clicked, the `onClick` function provided by the Board is called. Here's a review of how this is achieved:
+Note that we can not just write `this.squares[i] = 'X'` as one would usually do. The reason is that Vue can not detect such mutations, see https://vuejs.org/v2/guide/list.html#Caveats. Usually, one would write `Vue.set(this.squares, i, 'X')` here. But we want squares to be immutable, as we'll explain later.
+Anayw, this does still not work as our Square does not emit a `click` event yet. We want to emit an event whenever the button inside the Square is clicked:
 
-1. The `onClick` prop on the built-in DOM `<button>` component tells React to set up a click event listener.
-2. When the button is clicked, React will call the `onClick` event handler that is defined in Square's `render()` method.
-3. This event handler calls `this.props.onClick()`. The Square's `onClick` prop was specified by the Board.
-4. Since the Board passed `onClick={() => this.handleClick(i)}` to Square, the Square calls `this.handleClick(i)` when clicked.
-5. We have not defined the `handleClick()` method yet, so our code crashes.
-
->Note
->
->The DOM `<button>` element's `onClick` attribute has a special meaning to React because it is a built-in component. For custom components like Square, the naming is up to you. We could name the Square's `onClick` prop or Board's `handleClick` method differently. In React, however, it is a convention to use `on[Event]` names for props which represent events and `handle[Event]` for the methods which handle the events.
-
-When we try to click a Square, we should get an error because we haven't defined `handleClick` yet. We'll now add `handleClick` to the Board class:
-
-```javascript{9-13}
-class Board extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      squares: Array(9).fill(null),
-    };
-  }
-
-  handleClick(i) {
-    const squares = this.state.squares.slice();
-    squares[i] = 'X';
-    this.setState({squares: squares});
-  }
-
-  renderSquare(i) {
-    return (
-      <Square
-        value={this.state.squares[i]}
-        onClick={() => this.handleClick(i)}
-      />
-    );
-  }
-
-  render() {
-    const status = 'Next player: X';
-
-    return (
-      <div>
-        <div className="status">{status}</div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
-      </div>
-    );
-  }
-}
+```html
+<template>
+  <button class="square" @click="$emit('click')">
+    {{value}}
+  </button>
+</template>
 ```
 
-**[View the full code at this point](https://codepen.io/gaearon/pen/ybbQJX?editors=0010)**
+Now, when a Square is clicked, the `handleClick` function provided by the Board is called. Here's a review of how this is achieved:
+
+1. The `@click` prop on the built-in DOM `<button>` component tells Vue.js to set up a click event listener.
+2. When the button is clicked, Vue.js will call the event handler `$emit('click')`.
+3. This event handler triggers all event handlers that are subscribed to the Square's `click` event.
+4. In particular this calls the Board's `handleClick` method.
 
 After these changes, we're again able to click on the Squares to fill them. However, now the state is stored in the Board component instead of the individual Square components. When the Board's state changes, the Square components re-render automatically. Keeping the state of all squares in the Board component will allow it to determine the winner in the future.
 
-Since the Square components no longer maintain state, the Square components receive values from the Board component and inform the Board component when they're clicked. In React terms, the Square components are now **controlled components**. The Board has full control over them.
-
-Note how in `handleClick`, we call `.slice()` to create a copy of the `squares` array to modify instead of modifying the existing array. We will explain why we create a copy of the `squares` array in the next section.
+Since the Square components no longer maintain state, the Square components receive values from the Board component and inform the Board component when they're clicked.
 
 ### Why Immutability Is Important
 
@@ -683,198 +527,88 @@ Detecting changes in mutable objects is difficult because they are modified dire
 
 Detecting changes in immutable objects is considerably easier. If the immutable object that is being referenced is different than the previous one, then the object has changed.
 
-#### Determining When to Re-render in React
+#### Determining When to Re-render in Vue.js 
 
-The main benefit of immutability is that it helps you build _pure components_ in React. Immutable data can easily determine if changes have been made which helps to determine when a component requires re-rendering.
-
-You can learn more about `shouldComponentUpdate()` and how you can build *pure components* by reading [Optimizing Performance](/docs/optimizing-performance.html#examples).
-
-### Function Components
-
-We'll now change the Square to be a **function component**.
-
-In React, **function components** are a simpler way to write components that only contain a `render` method and don't have their own state. Instead of defining a class which extends `React.Component`, we can write a function that takes `props` as input and returns what should be rendered. Function components are less tedious to write than classes, and many components can be expressed this way.
-
-Replace the Square class with this function:
-
-```javascript
-function Square(props) {
-  return (
-    <button className="square" onClick={props.onClick}>
-      {props.value}
-    </button>
-  );
-}
-```
-
-We have changed `this.props` to `props` both times it appears.
-
-**[View the full code at this point](https://codepen.io/gaearon/pen/QvvJOv?editors=0010)**
-
->Note
->
->When we modified the Square to be a function component, we also changed `onClick={() => this.props.onClick()}` to a shorter `onClick={props.onClick}` (note the lack of parentheses on *both* sides). In a class, we used an arrow function to access the correct `this` value, but in a function component we don't need to worry about `this`.
+The main benefit of immutability is that it helps you build _pure components_ in Vue.js. Immutable data can easily determine if changes have been made which helps to determine when a component requires re-rendering.
 
 ### Taking Turns
 
 We now need to fix an obvious defect in our tic-tac-toe game: the "O"s cannot be marked on the board.
 
-We'll set the first move to be "X" by default. We can set this default by modifying the initial state in our Board constructor:
+We'll set the first move to be "X" by default. We can set this default by modifying the initial state in our Board:
 
-```javascript{6}
-class Board extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      squares: Array(9).fill(null),
-      xIsNext: true,
-    };
-  }
+```javascript
+export default class Board extends Vue {
+  squares: (string | null)[] = Array(9).fill(null)
+  xIsNext: boolean = true
+  …
 ```
 
 Each time a player moves, `xIsNext` (a boolean) will be flipped to determine which player goes next and the game's state will be saved. We'll update the Board's `handleClick` function to flip the value of `xIsNext`:
 
-```javascript{3,6}
-  handleClick(i) {
-    const squares = this.state.squares.slice();
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
-    this.setState({
-      squares: squares,
-      xIsNext: !this.state.xIsNext,
-    });
+```javascript
+  handleClick (i: number) {
+    this.squares = this.squares.slice()
+    this.squares[i] = this.xIsNext ? 'X' : 'O'
+    this.xIsNext = !this.xIsNext
   }
 ```
 
-With this change, "X"s and "O"s can take turns. Let's also change the "status" text in Board's `render` so that it displays which player has the next turn:
+With this change, "X"s and "O"s can take turns. Let's also change the "status" text in Board so that it displays which player has the next turn:
 
-```javascript{2}
-  render() {
-    const status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-
-    return (
-      // the rest has not changed
+```html
+  <div class="status">Next player: {{xIsNext ? 'X' : 'O'}}</div>
 ```
-
-After applying these changes, you should have this Board component:
-
-```javascript{6,11-16,29}
-class Board extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      squares: Array(9).fill(null),
-      xIsNext: true,
-    };
-  }
-
-  handleClick(i) {
-    const squares = this.state.squares.slice();
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
-    this.setState({
-      squares: squares,
-      xIsNext: !this.state.xIsNext,
-    });
-  }
-
-  renderSquare(i) {
-    return (
-      <Square
-        value={this.state.squares[i]}
-        onClick={() => this.handleClick(i)}
-      />
-    );
-  }
-
-  render() {
-    const status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-
-    return (
-      <div>
-        <div className="status">{status}</div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
-      </div>
-    );
-  }
-}
-```
-
-**[View the full code at this point](https://codepen.io/gaearon/pen/KmmrBy?editors=0010)**
 
 ### Declaring a Winner
 
 Now that we show which player's turn is next, we should also show when the game is won and there are no more turns to make. We can determine a winner by adding this helper function to the end of the file:
 
 ```javascript
-function calculateWinner(squares) {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+  get winner () {
+    const lines = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6]
+    ]
+    for (let i = 0; i < lines.length; i++) {
+      const [a, b, c] = lines[i]
+      if (this.squares[a] && this.squares[a] === this.squares[b] && this.squares[a] === this.squares[c]) {
+        return this.squares[a]
+      }
     }
-  }
-  return null;
-}
-```
-
-We will call `calculateWinner(squares)` in the Board's `render` function to check if a player has won. If a player has won, we can display text such as "Winner: X" or "Winner: O". We'll replace the `status` declaration in Board's `render` function with this code:
-
-```javascript{2-8}
-  render() {
-    const winner = calculateWinner(this.state.squares);
-    let status;
-    if (winner) {
-      status = 'Winner: ' + winner;
-    } else {
-      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-    }
-
-    return (
-      // the rest has not changed
-```
-
-We can now change the Board's `handleClick` function to return early by ignoring a click if someone has won the game or if a Square is already filled:
-
-```javascript{3-5}
-  handleClick(i) {
-    const squares = this.state.squares.slice();
-    if (calculateWinner(squares) || squares[i]) {
-      return;
-    }
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
-    this.setState({
-      squares: squares,
-      xIsNext: !this.state.xIsNext,
-    });
+    return null
   }
 ```
 
-**[View the full code at this point](https://codepen.io/gaearon/pen/LyyXgK?editors=0010)**
+Note the `get` in front of our method. This makes `winner` a [computed property](https://vuejs.org/v2/guide/computed.html#Computed-vs-Watched-Property), i.e., this property is automatically recomputed whenever any of the state that was used to determine it changes.
 
-Congratulations! You now have a working tic-tac-toe game. And you've just learned the basics of React too. So *you're* probably the real winner here.
+Let's replace our status so that it shows the winner:
+
+```html
+    <div v-if="winner == null" class="status">Next player: {{xIsNext ? 'X' : 'O'}}</div>
+    <div v-else class="status">Winner: {{winner}}</div>
+```
+
+Also, we should not allow not allow putting more markers on our board once a winner has been determined:
+
+```javascript
+  handleClick (i: number) {
+    if (this.winner != null) {
+      return
+    }
+    this.squares = this.squares.slice()
+    this.squares[i] = this.xIsNext ? 'X' : 'O'
+    this.xIsNext = !this.xIsNext
+  }
+```
+
+Congratulations! You now have a working tic-tac-toe game. And you've just learned the basics of Vue.js too. So *you're* probably the real winner here.
 
 ## Adding Time Travel
 
